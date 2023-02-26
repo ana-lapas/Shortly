@@ -15,11 +15,48 @@ export async function signUp(req, res) {
 
 export async function signIn(req, res) {
     const user = res.locals.user;
-    const token = v4uuid();    
+    const token = v4uuid();
     try {
         await connection.query(`INSERT INTO sessions("userId",token) VALUES ($1,$2)`, [user.rows[0].id, token]);
-        return res.status(200).send({token});
+        return res.status(200).send({ token });
     } catch (err) {
         return res.status(500).send(err.message);
     };
+};
+
+export async function getMe(req, res) {
+    const { id, userId } = res.locals.user;
+    console.log({ id, userId });
+    try {
+        const getById = await connection.query(`SELECT * FROM users 
+        JOIN urls 
+        ON users.id="urls"."userId" WHERE users.id=$1`, [userId]);
+        const viewd = await connection.query(`SELECT * FROM urls WHERE "userId"=$1`, [userId]);
+        const finalME = viewd.rows.map((me) => {
+            return {
+                "id": me.id,
+                "shortUrl": me.shortUrl,
+                "url": me.url,
+                "visitCount": me.views
+            }
+        }
+        )
+        const tryviews = viewd.rows;
+        let allVisits = 0;
+        if (finalME.length > 0) {
+            for (let index = 0; index < finalME.length; index++) {
+                allVisits += finalME[index].visitCount;
+
+            }
+        };
+
+        return res.status(200).send({
+            "id": id,
+            "name": getById.rows[0].name,
+            "visitCount": allVisits,
+            "shortenedUrls": finalME
+        });
+    } catch (err) {
+        return res.status(500).send(err.message);
+    }
 };

@@ -9,6 +9,7 @@ export async function validateToken(req, res, next) {
             return res.sendStatus(401);
         }
         res.locals.user = existingToken.rows[0];
+        console.log(existingToken.rows[0]);
     } catch (err) {
         res.status(500).send(err.message);
         return;
@@ -44,7 +45,7 @@ export async function validateShortLink(req, res, next) {
     next();
 };
 
-export async function validateIdAndUser(req, res, next){
+export async function validateIdAndUser(req, res, next) {
     const { id } = req.params;
     const user = res.locals.user;
     try {
@@ -52,7 +53,7 @@ export async function validateIdAndUser(req, res, next){
         if (existingId.rows.length === 0) {
             return res.sendStatus(404);
         }
-        if (existingId.rows[0].userId != user.userId) {            
+        if (existingId.rows[0].userId != user.userId) {
             return res.sendStatus(401);
         }
     } catch (err) {
@@ -60,5 +61,4 @@ export async function validateIdAndUser(req, res, next){
         return;
     }
     next();
-
-}
+};
