@@ -27,7 +27,7 @@ export async function getShorten(req, res) {
     const {id} = req.params;
     try {
         const getById = await connection.query(`SELECT * FROM urls WHERE id=$1`, [id]);
-        return res.status(201).send({ "id": id, "shortUrl": getById.rows[0].shortUrl, "url": getById.rows[0].url })
+        return res.status(200).send({ "id": id, "shortUrl": getById.rows[0].shortUrl, "url": getById.rows[0].url })
     } catch (err) {
         return res.status(500).send(err.message);
     }
