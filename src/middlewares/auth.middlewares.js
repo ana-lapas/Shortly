@@ -40,7 +40,7 @@ export async function validateSignIn(req, res, next) {
     }
     const checkPassword = bcrypt.compareSync(user.password, existingCustomer.rows[0].password);
 
-    if (!checkPassword) {
+    if (checkPassword === false) {
       return res.status(401).send("Este usuário não está autorizado a fazer login");
     };
     res.locals.user = existingCustomer;
