@@ -35,7 +35,7 @@ export async function validateSignIn(req, res, next) {
     const existingCustomer = await connection.query(`SELECT * FROM users WHERE email=$1`, [user.email]);
 
     if (existingCustomer.rows.length === 0) {
-      return res.status(409).send("Realize seu cadastro");
+      return res.status(401).send("Realize seu cadastro");
     }
     const checkPassword = bcrypt.compareSync(user.password, existingCustomer.rows[0].password);
 

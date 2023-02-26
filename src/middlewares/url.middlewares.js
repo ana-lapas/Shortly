@@ -43,3 +43,22 @@ export async function validateShortLink(req, res, next) {
     }
     next();
 };
+
+export async function validateIdAndUser(req, res, next){
+    const { id } = req.params;
+    const user = res.locals.user;
+    try {
+        const existingId = await connection.query(`SELECT * FROM urls WHERE "id"=$1`, [id]);
+        if (existingId.rows.length === 0) {
+            return res.sendStatus(404);
+        }
+        if (existingId.rows[0].userId != user.userId) {            
+            return res.sendStatus(401);
+        }
+    } catch (err) {
+        res.status(500).send(err.message);
+        return;
+    }
+    next();
+
+}

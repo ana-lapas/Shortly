@@ -5,7 +5,8 @@ CREATE TABLE "users"(
     "email" TEXT NOT NULL UNIQUE,
     "createdAt" TIMESTAMP NOT NULL DEFAULT NOW());
 
-CREATE TABLE "sessions"("id" SERIAL PRIMARY KEY,
+CREATE TABLE "sessions"(
+    "id" SERIAL PRIMARY KEY,
     "userId" INTEGER NOT NULL REFERENCES "users"("id"),
     "token" TEXT NOT NULL,
     "isOnline" BOOLEAN NOT NULL DEFAULT true,
