@@ -1,5 +1,5 @@
-import bcrypt from 'bcrypt';
-import { v4 as v4uuid } from 'uuid';
+import bcrypt from "bcrypt";
+import { v4 as v4uuid } from "uuid";
 import connection from "../config/database.connection.js";
 
 export async function signUp(req, res) {
@@ -26,11 +26,8 @@ export async function signIn(req, res) {
 
 export async function getMe(req, res) {
     const { id, userId } = res.locals.user;
-    console.log({ id, userId });
     try {
-        const getById = await connection.query(`SELECT * FROM users 
-        JOIN urls 
-        ON users.id="urls"."userId" WHERE users.id=$1`, [userId]);
+        const getById = await connection.query(`SELECT * FROM users JOIN urls ON users.id="urls"."userId" WHERE users.id=$1`, [userId]);
         const viewd = await connection.query(`SELECT * FROM urls WHERE "userId"=$1`, [userId]);
         const finalME = viewd.rows.map((me) => {
             return {
@@ -39,14 +36,12 @@ export async function getMe(req, res) {
                 "url": me.url,
                 "visitCount": me.views
             }
-        }
-        )
+        });
         const tryviews = viewd.rows;
         let allVisits = 0;
         if (finalME.length > 0) {
             for (let index = 0; index < finalME.length; index++) {
                 allVisits += finalME[index].visitCount;
-
             }
         };
 
@@ -56,6 +51,17 @@ export async function getMe(req, res) {
             "visitCount": allVisits,
             "shortenedUrls": finalME
         });
+    } catch (err) {
+        return res.status(500).send(err.message);
+    }
+};
+
+export async function getRanking(req, res) {
+    try {
+        const {rows} = await connection.query(`SELECT 
+            users.id, users.name, COUNT (urls.id) AS "linksCount", COALESCE(SUM(urls.views), 0) AS "visitCount" FROM users
+            LEFT JOIN urls ON users.id="urls"."userId" GROUP BY users.id ORDER BY "visitCount" DESC LIMIT 10`);
+        return res.status(200).send(rows);
     } catch (err) {
         return res.status(500).send(err.message);
     }
