@@ -31,4 +31,16 @@ export async function getShorten(req, res) {
     } catch (err) {
         return res.status(500).send(err.message);
     }
-}
+};
+
+export async function goShorten(req, res) {
+    const { shortUrl } = req.params;
+    try {
+        const getBySUrl = await connection.query(`SELECT * FROM urls WHERE "shortUrl"=$1`, [shortUrl]);
+        const updatedViews = getBySUrl.rows[0].views +1;
+        await connection.query(`UPDATE urls SET "views"=$1 WHERE  "shortUrl"=$2`, [updatedViews, shortUrl]);
+        return res.status(302).redirect([getBySUrl.rows[0].url])
+    } catch (err) {
+        return res.status(500).send(err.message);
+    }
+};

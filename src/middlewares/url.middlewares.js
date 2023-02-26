@@ -29,3 +29,17 @@ export async function validateId(req, res, next) {
     }
     next();
 };
+
+export async function validateShortLink(req, res, next) {
+    const { shortUrl } = req.params;
+    try {
+        const existingSUrl = await connection.query(`SELECT * FROM urls WHERE "shortUrl"=$1`, [shortUrl]);
+        if (existingSUrl.rows.length === 0) {
+            return res.sendStatus(404);
+        }
+    } catch (err) {
+        res.status(500).send(err.message);
+        return;
+    }
+    next();
+};
