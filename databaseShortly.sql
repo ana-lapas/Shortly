@@ -8,7 +8,9 @@ CREATE TABLE "users"(
 CREATE TABLE "sessions"("id" SERIAL PRIMARY KEY,
     "userId" INTEGER NOT NULL REFERENCES "users"("id"),
     "token" TEXT NOT NULL,
-    "isOnline" BOOLEAN NOT NULL DEFAULT true);
+    "isOnline" BOOLEAN NOT NULL DEFAULT true,
+    "createdAt" TIMESTAMP NOT NULL DEFAULT NOW()
+    );
 
 CREATE TABLE "urls"(
     "id" SERIAL PRIMARY KEY,

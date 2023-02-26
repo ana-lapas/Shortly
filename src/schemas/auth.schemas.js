@@ -6,3 +6,8 @@ export const newUserSchema = joi.object({
     password: joi.string().min(4).required(),
     confirmPassword: joi.any().valid(joi.ref('password')).required()
 });
+
+export const newLoginSchema = joi.object({
+    email: joi.string().email().min(13).required(),
+    password: joi.string().min(4).required()
+});
