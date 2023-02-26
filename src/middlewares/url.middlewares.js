@@ -15,3 +15,17 @@ export async function validateToken(req, res, next) {
     }
     next();
 };
+
+export async function validateId(req, res, next) {
+    const { id } = req.params;
+    try {
+        const existingId = await connection.query(`SELECT * FROM urls WHERE id=$1`, [id]);
+        if (existingId.rows.length === 0) {
+            return res.sendStatus(404);
+        }
+    } catch (err) {
+        res.status(500).send(err.message);
+        return;
+    }
+    next();
+};
