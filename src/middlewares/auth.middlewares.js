@@ -25,7 +25,6 @@ export async function validateSignUp(req, res, next) {
 };
 export async function validateSignIn(req, res, next) {
   const user = req.body;
-  console.log(user)
   try {
     const { error } = newLoginSchema.validate(user, { abortEarly: false });
 
