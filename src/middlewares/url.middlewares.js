@@ -9,7 +9,6 @@ export async function validateToken(req, res, next) {
             return res.sendStatus(401);
         }
         res.locals.user = existingToken.rows[0];
-        console.log(existingToken.rows[0]);
     } catch (err) {
         res.status(500).send(err.message);
         return;
